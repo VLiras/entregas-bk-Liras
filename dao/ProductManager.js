@@ -1,21 +1,4 @@
-const fs = require("fs");
-// const info = require("./products.json")
-
-
-
-// const file = "./products.json"
-class Product {
-    constructor(title, description, price, code, stock, thumbnails, status, category) {
-        this.title = title;
-        this.description = description;
-        this.price = price;
-        this.code = code;
-        this.stock = stock;
-        this.thumbnails = thumbnails;
-        this.status = status;
-        this.category = category;
-    }
-}
+const fs = require("fs")
 
 class ProductManager {
     constructor(path) {
@@ -29,7 +12,7 @@ class ProductManager {
                     return JSON.parse(products)
             }
             else{
-                return "El archivo no existe"
+                return new Error("El archivo no existe")
             }
         }
         catch(err){
@@ -55,8 +38,8 @@ class ProductManager {
             let id = 1
             if(products.length >= 0){
                 id = products.length + 1
-                // console.log(id)
             }
+
             products.push({id, ...product})
             await fs.writeFile(this.path, 
                 JSON.stringify(products, null, 5), 
@@ -64,7 +47,6 @@ class ProductManager {
                     if (err) throw err;
                 }
             )
-            console.log("Producto agregado exitosamente")
             return
         }
         catch(err){
@@ -81,7 +63,7 @@ class ProductManager {
                 products[index] = updatedProduct
             }
             await fs.writeFile(this.path, JSON.stringify(products, null, 5), (e) => console.error(e))
-            console.log("Producto actualizado exitosamente")
+            return;
         }
         catch(err){
             console.log(err)
@@ -94,10 +76,10 @@ class ProductManager {
             if(productToDelete){
                 products = products.filter(p => p.id !== id)
                 await fs.writeFile(this.path, JSON.stringify(products, null, 5), (e) => console.error(e))
-                console.log("Producto eliminado con exito")
+                return;
             }
             else{
-                console.log("No se encontró el producto")
+                return new Error(`Error: producto no encontrado`)
             }
         }
         catch(err){
@@ -106,58 +88,29 @@ class ProductManager {
     }
 }
 
-// clase CartManager
-class CartManager {
-    constructor(path) {
-        this.path = path
-        this.carts = []
-    }
-    async getCarts() {
-        try{
-            if(fs.existsSync(this.path)){
-                const data = await fs.readFile(this.path, 'utf8')
-                this.carts = JSON.parse(data)
-                return this.carts
-            }
-            else{
-                return `El archivo de ruta ${this.path} no existe`
-            }
-        }
-        catch(err){ console.log(err) }
-    }
-    async getCartById(id){
-        try{
-            const carts = await this.getCarts()
-            const cart = carts.find((cart) => cart.id === id)
-            if(!cart){ return new Error("El carrito no existe") }
-            return cart
-        }
-        catch(err){ console.log(err) }
-    }
-    async addCart(products){
-        try{
-            const carts = await this.getCarts()
-            if(!Array(products)){return new Error (`Ingrese un array de productos valido`)}
-            const newCart = { id: carts.length + 1, products:products}
-            carts.push(newCart)
-            await fs.writeFile(this.path, JSON.stringify(carts, null, 5), (e) => console.log(e))
-            console.log("Carrito agregado exitosamente")
-        }
-        catch(err){ console.log(err) }
+class Product {
+    constructor(title, description, price, code, stock, thumbnails, status, category) {
+        this.title = title;
+        this.description = description;
+        this.code = code;
+        this.price = price;
+        this.status = status;
+        this.stock = stock;
+        this.category = category;
+        this.thumbnails = thumbnails;
     }
 }
 
-// Creo 3 productos con la clase Product
-const product1 = new Product("Samsung A31", "Celular economico", 250, "SA31", [], true,22,"Celulares")
-const product2 = new Product("Samsung S25", "Celular de alta gama", 1250, "SA25", [], true, 25, "Celulares")
-const product3 = new Product("Iphone 16 pro", "Celular premium con fotos de alta resolucion",180, "IPH16", [], true, 16, "Celulares")
-
+/*
 const app = async () => {
-    // await manager.addProduct(product1)
-    // await manager.addProduct(product2)
-    // await manager.addProduct(product3)
+    const product1 = new Product("Samsung A31", "Celular economico", 250, "SA31", [], true,22,"Celulares")
+    const product2 = new Product("Samsung S25", "Celular de alta gama", 1250, "SA25", [], true, 25, "Celulares")
+    const product3 = new Product("Iphone 16 pro", "Celular premium con fotos de alta resolucion",180, "IPH16", [], true, 16, "Celulares")
+    await manager.addProduct(product1)
+    await manager.addProduct(product2)
+    await manager.addProduct(product3)
 
-    // console.log(await manager.getProducts())
+    console.log(await manager.getProducts())
 
     //Prueba para actualizar un producto
     await manager.updateProduct(1, {title: "Samsung A32", price:350, code:"SA32"})
@@ -166,10 +119,8 @@ const app = async () => {
         console.log(await manager.getProducts())
     }, 3000)
 }
-
-
+*/
 
 module.exports = {
-    ProductManager, Product, CartManager
+    ProductManager
 }
-
