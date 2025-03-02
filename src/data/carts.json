@@ -3,10 +3,6 @@
           "id": 1,
           "products": [
                {
-                    "id": 1,
-                    "name": "Product 1"
-               },
-               {
                     "product": 1,
                     "quantity": 25
                }
@@ -20,9 +16,6 @@
                     "quantity": 36
                }
           ]
-     },
-     {
-          "id": 3,
-          "products": []
      }
+    
 ]

@@ -31,5 +31,16 @@
           "thumbnails": true,
           "status": 16,
           "category": "Celulares"
+     },
+     {
+          "id": 4,
+          "title": "Samsung A53",
+          "description": "Un celular para tu bolsillo",
+          "code": "SA53",
+          "price": 385,
+          "status": true,
+          "stock": 28,
+          "category": "Celulares",
+          "thumbnails": []
      }
 ]

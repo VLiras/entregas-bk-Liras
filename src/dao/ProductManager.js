@@ -7,13 +7,11 @@ class ProductManager {
     }
     async getProducts(){
         try{
-            if(fs.existsSync(this.path)){
-                    const products = await fs.promises.readFile(this.path, "utf-8")
-                    return JSON.parse(products)
+            if(!fs.existsSync(this.path)){
+                throw new Error("El archivo no existe")
             }
-            else{
-                return new Error("El archivo no existe")
-            }
+            const products = await fs.promises.readFile(this.path, "utf-8")
+            return JSON.parse(products)
         }
         catch(err){
             console.log(err)
@@ -33,20 +31,15 @@ class ProductManager {
         }
     }
     async addProduct(product){
+        let id = 1
+        
         try{    
             const products = await this.getProducts()
-            let id = 1
             if(products.length >= 0){
                 id = products.length + 1
             }
-
             products.push({id, ...product})
-            await fs.writeFile(this.path, 
-                JSON.stringify(products, null, 5), 
-                (err) => {
-                    if (err) throw err;
-                }
-            )
+            await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5))
             return
         }
         catch(err){
@@ -62,7 +55,7 @@ class ProductManager {
                 const updatedProduct = {...productToUpdate, ...data}
                 products[index] = updatedProduct
             }
-            await fs.writeFile(this.path, JSON.stringify(products, null, 5), (e) => console.error(e))
+            await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5))
             return;
         }
         catch(err){
@@ -75,7 +68,7 @@ class ProductManager {
             const productToDelete = products.find((product) => product.id === id)
             if(productToDelete){
                 products = products.filter(p => p.id !== id)
-                await fs.writeFile(this.path, JSON.stringify(products, null, 5), (e) => console.error(e))
+                await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5))
                 return;
             }
             else{
@@ -112,7 +105,6 @@ const app = async () => {
 
     console.log(await manager.getProducts())
 
-    //Prueba para actualizar un producto
     await manager.updateProduct(1, {title: "Samsung A32", price:350, code:"SA32"})
 
     setTimeout(async () => {

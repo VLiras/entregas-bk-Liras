@@ -37,10 +37,11 @@ class CartManager {
 
             carts.push(newCart)
             await fs.writeFile(this.path, JSON.stringify(carts, null, 5), (e) => console.log(e))
-            console.log("Carrito agregado exitosamente")
+            return
         }
         catch(err){ console.log(err) }
     }
+    
     async addProductToCart(idCart, idProd, units){
         try{
             const carts = await this.getCarts()
@@ -48,19 +49,20 @@ class CartManager {
             
             const cart = carts.find(c => c.id === idCart)
             
-            if(cart){
-                const index = carts.indexOf(cart)
-                const newProduct = { 
-                    product: idProd, 
-                    quantity: units
-                }
-                cart.products.push(newProduct)
-                
-                const updatedCart = { ...cart }
-                carts[index] = updatedCart
-                await fs.writeFile(this.path, JSON.stringify(carts, null, 5), (e) => console.log(e))
-                console.log(`Producto agregado con exito al carrito de id ${idCart}`)
+            if(!cart){
+                throw new Error(`No se encontro el carrito`)
             }      
+            const index = carts.indexOf(cart)
+            const newProduct = { 
+                product: idProd, 
+                quantity: units
+            }
+            cart.products.push(newProduct)
+            
+            const updatedCart = { ...cart }
+            carts[index] = updatedCart
+
+            await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 5))
         }
         catch(err){
             console.log(err)
